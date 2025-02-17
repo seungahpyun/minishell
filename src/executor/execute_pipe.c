@@ -6,13 +6,10 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/31 11:37:43 by bewong        #+#    #+#                 */
-<<<<<<< HEAD
-/*   Updated: 2025/02/11 09:58:19 by bewong        ########   odam.nl         */
-=======
-/*   Updated: 2025/02/13 15:11:27 by bewong        ########   odam.nl         */
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
+/*   Updated: 2025/02/17 22:39:30 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "env.h"
 #include "minishell.h"
@@ -34,50 +31,32 @@ size_t	count_pipes(t_ast_node *node)
 	return (count);
 }
 
-pid_t	launch_pipe(t_ast_node *node)
+pid_t	launch_pipe(t_ast_node *node, t_env **env)
 {
-<<<<<<< HEAD
-	int		input;
-	int		pipe_fd[2];
-	// size_t	i;
-
-	signal(SIGINT, interrput_slience);
-	signal(SIGQUIT, interrput_slience);
-	// i = 0;
-	while (node && node->left && node->right)
-=======
-	int			input;
-	int			pipe_fd[2];
-	t_ast_node	*current;
+	int	input;
+	int	pipe_fd[2];
 
 	input = 0;
 	signal(SIGINT, interrput_silence);
 	signal(SIGQUIT, interrput_silence);
-	current = node;
-	while (current && current->type == TOKEN_PIPE && current->left)
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
+	while (node && node->left && node->type == TOKEN_PIPE)
 	{
 		if (pipe(pipe_fd) == -1)
 		{
 			error("pipe", NULL);
 			exit(1);
 		}
-		spawn_process(input, pipe_fd, current->left);
+		spawn_process(input, pipe_fd, node->left, env);
 		close(pipe_fd[1]);
 		input = pipe_fd[0];
-<<<<<<< HEAD
 		node = node->right;
-		// i++;
-=======
-		current = current->right;
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
 	}
 	pipe_fd[1] = 1;
 	pipe_fd[0] = 0;
-	return (spawn_process(input, pipe_fd, current));
+	return (spawn_process(input, pipe_fd, node, env));
 }
 
-pid_t	spawn_process(int input, int pipe_fd[2], t_ast_node *node)
+pid_t	spawn_process(int input, int pipe_fd[2], t_ast_node *node, t_env **env)
 {
 	pid_t	pid;
 	int		output;
@@ -85,12 +64,12 @@ pid_t	spawn_process(int input, int pipe_fd[2], t_ast_node *node)
 
 	output = pipe_fd[1];
 	new_input = pipe_fd[0];
-	printf("Spawning process for command: %s\n", node->args[0]);
+	// fprintf(stderr,"Spawning process for command: %s\n", node->args[0]);
 	pid = fork();
 	if (pid == 0)
 	{
-		printf("Executing child process: %s\n", node->args[0]);
-		child_process(node, input, output, new_input);
+		// fprintf(stderr,"Executing child process: %s\n", node->args[0]);
+		child_process(node, input, output, new_input, env);
 	}
 	else if (pid < 0)
 	{
@@ -102,13 +81,13 @@ pid_t	spawn_process(int input, int pipe_fd[2], t_ast_node *node)
 	return (pid);
 }
 
-void	child_process(t_ast_node *node, int input, int output, int new_input)
+void	child_process(t_ast_node *node, int input, int output, int new_input, t_env **env)
 {
 	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	redirect_io(input, output, new_input);
-	set_exit_status(executor_status(node));
-	free_all_memory();
+	set_exit_status(executor_status(node, env));
+	// free_all_memory();
 	exit(get_exit_status());
 }
 

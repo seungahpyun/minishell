@@ -6,11 +6,7 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/20 10:13:34 by spyun         #+#    #+#                 */
-<<<<<<< HEAD
-/*   Updated: 2025/02/11 10:37:00 by bewong        ########   odam.nl         */
-=======
-/*   Updated: 2025/02/11 13:26:37 by bewong        ########   odam.nl         */
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
+/*   Updated: 2025/02/17 21:16:21 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +37,6 @@
 # define BLUE "\033[34m"
 # define RESET "\033[0m"
 
-
 extern int	g_exit_status;
 
 typedef enum e_token_type
@@ -61,14 +56,10 @@ typedef enum e_token_type
 	TOKEN_NEWLINE,
 	TOKEN_EOF,
 	TOKEN_SUBSHELL,
-<<<<<<< HEAD
-=======
 	TOKEN_ENV,
 	TOKEN_BLOCK = TOKEN_SUBSHELL,
 	TOKEN_EXEC = TOKEN_WORD,
-	TOKEN_CTRL = TOKEN_AND | TOKEN_OR,
-	TOKEN_REDIR = TOKEN_REDIR_IN | TOKEN_REDIR_OUT | TOKEN_APPEND | TOKEN_HEREDOC
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
+	TOKEN_CTRL = TOKEN_AND | TOKEN_OR
 }	t_token_type;
 
 typedef struct s_token
@@ -77,7 +68,6 @@ typedef struct s_token
 	struct s_token	*next;
 	t_token_type	type;
 }	t_token;
-
 
 void	print_banner(void);
 

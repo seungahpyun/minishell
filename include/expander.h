@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/12 12:13:36 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/13 17:54:10 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/17 21:18:52 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ bool	is_expand_char(char c);
 void	expand_exec_vars(t_ast_node *node);
 
 /*expand_redir*/
-void	expand_redir_vars(t_redirection *r);
+void	expand_redir_vars(t_redir *r);
 
 /*expand_utils*/
 void	add_to_args(char ***expanded, char *str, int *count, bool splited);
@@ -43,6 +43,6 @@ char	*expand_double_quote(char *str, int *i);
 char	*expand_single_quote(char *str, int *i);
 
 /*expand_heredoc*/
-void	expand_heredoc(t_redirection *r);
+void	expand_heredoc(t_redir *r);
 
 #endif

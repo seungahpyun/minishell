@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/13 17:11:17 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/13 18:03:02 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/17 21:19:41 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ static char	*read_n_expand(int heredoc_fd)
 	return (content);
 }
 
-void	expand_heredoc(t_redirection *r)
+void	expand_heredoc(t_redir *r)
 {
 	int		heredoc_fd;
 	char	*content;

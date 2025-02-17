@@ -6,30 +6,41 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/28 12:37:32 by spyun         #+#    #+#                 */
-<<<<<<< HEAD
-/*   Updated: 2025/02/11 10:40:20 by bewong        ########   odam.nl         */
-=======
-/*   Updated: 2025/02/13 12:30:08 by bewong        ########   odam.nl         */
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
+/*   Updated: 2025/02/17 21:08:07 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
+
 #include "common.h"
 #include "minishell.h"
+#include "executor.h"
 #include <stdio.h>
 
 /*
 	It is a static array of linked lists, each representing a memory ctx.
 	it returns a ptr to the linked list for the requested ctx.
 */
-<<<<<<< HEAD
-static t_mem_tracker	**get_mem_list(t_mem_context ctx)
-=======
 static t_mem_tracker	**get_mem_list(void)
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
 {
 	static t_mem_tracker *heap = NULL;
 	return (&heap);
+}
+
+void	free_env(t_env **env)
+{
+	t_env	*tmp;
+
+	if (!env || !*env)
+		return ;
+	while (*env)
+	{
+		tmp = (*env)->next;
+		free_alloc((*env)->key);
+		free_alloc((*env)->value);
+		free_alloc(*env);
+		*env = tmp;
+	}
+	*env = NULL;
 }
 
 /* Iterate over all memory contexts and free all */
@@ -96,6 +107,7 @@ void	*mem_alloc(size_t size)
 	node =	mem_lstnew(ptr);
 	if (!node)
 	{
+		free(ptr);
 		free_all_memory();
 		perror("Memory allocation failure");
 		exit(EXIT_FAILURE);
@@ -115,3 +127,5 @@ void	free_tab(char **tab)
 		free_alloc(tab[i++]);
 	free_alloc(tab);
 }
+
+

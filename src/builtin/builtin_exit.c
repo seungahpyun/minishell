@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/21 23:06:50 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/06 17:14:36 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/17 22:47:13 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,11 @@ static bool	is_within_long_range(char *arg)
 	Single Non-Numeric Argument: Displays an error and exits with status 2.
 	Multiple Arguments: Displays an error and does not exit.
 */
-int	builtin_exit(t_ast_node *node)
+int	builtin_exit(t_ast_node *node, t_env **env)
 {
 	char	**args;
 
+	(void)env;
 	args = node->args;
 	ft_putendl_fd("exit", STDIN_FILENO);
 	if (node->argc == 1)
@@ -87,7 +88,7 @@ int	builtin_exit(t_ast_node *node)
 	if (!(is_valid_numeric(args[1]) && is_within_long_range(args[1])))
 	{
 		ft_putendl_fd("minishell: exit: numeric argument required", STDERR_FILENO);
-		free_all_memory();
+		// free_all_memory();
 		exit(255);
 	}
 	if (node->argc > 2)

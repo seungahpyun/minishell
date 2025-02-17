@@ -1,0 +1,11 @@
+env | sort | grep -v SHLVL | grep -v ^_
+export | sort | grep -v SHLVL | grep -v "declare -x _" | grep -v "PS.="
+cat ./test_files/infile_big | grep oi
+cat minishell.h | grep ");"$
+export GHOST=123 | env | grep GHOST
+echo hello | grep h
+ls -l | wc -l
+cat nonexistent_file | wc -c
+echo test | cat | cat | cat
+ls | grep .c | sort
+echo "Multiple pipes test" | tr a-z A-Z | rev

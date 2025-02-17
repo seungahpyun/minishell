@@ -6,11 +6,7 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/20 13:46:08 by spyun         #+#    #+#                 */
-<<<<<<< HEAD
-/*   Updated: 2025/02/11 10:38:20 by bewong        ########   odam.nl         */
-=======
-/*   Updated: 2025/02/13 16:08:57 by bewong        ########   odam.nl         */
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
+/*   Updated: 2025/02/17 23:18:53 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,39 +17,32 @@
 # include "lexer.h"
 # include "env.h"
 
-typedef struct s_redirection	t_redirection;
+typedef struct s_redir
+{
+	t_token_type			type;
+	char					*file;
+	struct s_redir	*next;
+}	t_redir;
+
+typedef struct s_last_redir
+{
+	t_redir	*in;
+	t_redir	*out;
+	t_redir	*heredoc;
+	t_redir	*append;
+}	t_last_redir;
 
 typedef struct s_ast_node
 {
 	t_token_type		type;
 	char				**args;
 	int					argc;
-	t_redirection		*redirections;
+	t_redir				*redirections;
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
-	t_env				**env;
-<<<<<<< HEAD
-	struct s_ast_node	*redir_cmd;
-	struct s_ast_node	*subshell_cmd;
-=======
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
 	int					is_subshell;
 }	t_ast_node;
 
-typedef struct s_redirection
-{
-	t_token_type			type;
-	char					*file;
-	struct s_redirection	*next;
-} t_redirection;
-
-typedef struct s_last_redirs
-{
-	t_redirection	*in;
-	t_redirection	*out;
-	t_redirection	*heredoc;
-	t_redirection	*append;
-}	t_last_redirs;
 
 typedef enum e_cmd_valid_error
 {
@@ -86,6 +75,7 @@ t_ast_node			*parse_pipeline(t_token **token);
 t_ast_node			*parse_command(t_token **token);
 t_ast_node			*parse_group(t_token **token);
 t_ast_node			*parse_redirection(t_token **token);
+t_ast_node			*parse_pipe_sequence(t_token **token);
 
 /* AST node manipulation */
 t_ast_node			*create_ast_node(t_token_type type);
@@ -93,17 +83,27 @@ void				add_arg_to_node(t_ast_node *node, char *arg);
 void				free_ast(t_ast_node *node);
 
 /* Logic operation handling */
-t_ast_node			*create_logic_node(t_token **token);
 t_ast_node			*handle_logic_sequence(t_token **token, t_ast_node *left);
-t_ast_node			*handle_logic_error(void);
+t_ast_node			*parse_command_sequence(t_token **token,
+						t_token_type end_type);
+t_ast_node			*handle_logic_operation(t_token **token,
+						t_ast_node *left);
 int					is_logic_operator(t_token *token);
+t_ast_node			*create_logic_node(t_token **token);
+t_ast_node			*handle_logic_error(void);
+void				add_redirection(t_ast_node *node, t_token_type type,
+						char *file);
+t_ast_node			*create_pipe_node(t_ast_node *left, t_ast_node *right);
+t_ast_node			*handle_redirection_in_pipe(t_ast_node *left,
+						t_token **token);
 
 /* Syntax validation */
 t_cmd_valid_error	validate_command_syntax(t_ast_node *node);
-t_cmd_valid_error	validate_redirection_syntax(t_redirection *redirs);
+t_cmd_valid_error	validate_redirection_syntax(t_redir *redirs);
 t_syntax_error		validate_syntax_tree(t_ast_node *root);
 t_syntax_error		validate_redir_syntax(t_ast_node *node);
 t_syntax_error		validate_subshell_syntax(t_ast_node *node);
+int					validate_parentheses(t_token *tokens);
 int					is_valid_command_name(const char *cmd);
 
 /* Error messages */
@@ -113,21 +113,15 @@ char				*get_syntax_error_msg(t_syntax_error error);
 /* AST optimization */
 t_ast_node			*optimize_ast(t_ast_node *root);
 t_ast_node			*remove_empty_nodes(t_ast_node *node);
-t_redirection		*merge_redirections(t_redirection *redir);
+t_redir				*merge_redirections(t_redir *redir);
 t_ast_node			*optimize_pipeline(t_ast_node *node);
 
 /* Parentheses handling */
 int					is_left_paren(t_token *token);
 int					is_right_paren(t_token *token);
 int					is_valid_after_subshell(t_token *token);
-int					check_paren_balance(t_token *start);
 int					is_redirection(t_token *token);
 t_ast_node			*handle_group_error(char *msg);
-int 				validate_subshell_command(t_ast_node *node);
+int					validate_subshell_command(t_ast_node *node);
 
-t_ast_node			*parse_command_sequence(t_token **token, t_token_type end_type);
-t_ast_node			*handle_logic_operation(t_token **token, t_ast_node *left);
-int					is_logic_operator(t_token *token);
-t_ast_node			*create_logic_node(t_token **token);
-t_ast_node			*handle_logic_error(void);
 #endif

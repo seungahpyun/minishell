@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/10 12:00:39 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/13 17:59:37 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/17 21:19:29 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "parser.h"
 #include "expander.h"
 
-static char	**expand_filenames(t_redirection *r)
+static char	**expand_filenames(t_redir *r)
 {
 	int		i;
 	bool	splited;
@@ -44,7 +44,7 @@ static char	**expand_filenames(t_redirection *r)
 	return (words);
 }
 
-void	expand_redir_vars(t_redirection *r)
+void	expand_redir_vars(t_redir *r)
 {
 	char	**words;
 

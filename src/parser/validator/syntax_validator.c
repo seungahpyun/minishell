@@ -6,11 +6,7 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/28 12:31:13 by spyun         #+#    #+#                 */
-<<<<<<< HEAD
-/*   Updated: 2025/02/11 10:43:55 by bewong        ########   odam.nl         */
-=======
-/*   Updated: 2025/02/10 14:09:12 by spyun         ########   odam.nl         */
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
+/*   Updated: 2025/02/17 21:18:09 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +17,6 @@ static t_syntax_error	validate_pipe_syntax(t_ast_node *node)
 {
 	if (!node->left || !node->right)
 		return (SYNTAX_INVALID_COMBINATION);
-	if (node->right && node->right->type == TOKEN_PIPE)
-		return (SYNTAX_INVALID_SEQUENCE);
 	return (SYNTAX_OK);
 }
 

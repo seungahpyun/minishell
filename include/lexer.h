@@ -6,11 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/20 13:28:37 by spyun         #+#    #+#                 */
-<<<<<<< HEAD
-/*   Updated: 2025/02/11 10:36:43 by bewong        ########   odam.nl         */
-=======
-/*   Updated: 2025/02/11 11:00:28 by bewong        ########   odam.nl         */
->>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
+/*   Updated: 2025/02/17 21:15:17 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +48,7 @@ void			free_tokens(t_token *token);
 t_token			*handle_operator(t_tokenizer *tokenizer);
 t_token			*handle_word(t_tokenizer *tokenizer);
 t_token			*handle_wildcard_token(const char *str);
-int				handle_heredoc(char *delimiter, int *heredoc_fd);
+int				match_pattern(const char *pattern, const char *string);
 
 /* Quote handling */
 void			handle_quote(t_tokenizer *tokenizer);
@@ -64,10 +60,10 @@ int				validate_quotes(const char *input);
 char			*handle_expansion(t_tokenizer *tokenizer, char *word);
 char			*handle_braced_expansion(char *str, int *pos,
 					t_quote_state state);
-char			*handle_extended_expansion(char *var_name, char *operator, char *word);
+char			*handle_extended_expansion(char *var_name,
+					char *operator, char *word);
 char			*expand_special_param(const char *param);
 char			*get_var_value(char *str, int *pos, t_quote_state state);
-char			**expand_wildcards(const char *pattern);
 
 /* Helper functions */
 t_token_type	get_operator_type(char *input);

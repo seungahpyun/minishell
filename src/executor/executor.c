@@ -12,32 +12,30 @@
 
 #include "executor.h"
 
-int	executor_status(t_ast_node *node)
+int	executor_status(t_ast_node *node, t_env **env)
 {	
-	// printf("executor_status: processing node of type %d\n", node->type);
-	if (node->type == TOKEN_EXEC)
-		return (exec_cmd(node));
+	t_redir	*redir;
+
+	if (!node || !env)
+		return (EXIT_FAILURE);
+	redir = node->redirections;
+	if (node->type == TOKEN_AND || node->type == TOKEN_OR)
+		return (exec_ctrl(node, env));
+	else if (redir)
+			return (exec_redir(node, env, redir));
 	else if (node->type == TOKEN_PIPE)
-		return (exec_pipe(node));
-	else if (node->type == TOKEN_AND || node->type == TOKEN_OR)
-		return (exec_ctrl(node));
-	else if (node->type ==  (TOKEN_REDIR_IN) || node->type ==  (TOKEN_REDIR_OUT)
-			|| node->type == TOKEN_APPEND || node->type == TOKEN_HEREDOC)
-		return (exec_redir(node));
+		return (exec_pipe(node, env));
 	else if (node->type == TOKEN_BLOCK)
-		return (exec_block(node));
+		return (exec_block(node, env));
+	else if (node->type == TOKEN_EXEC)
+		return (exec_cmd(node, env));
 	return (EXIT_FAILURE);
 }
 
-void	executor(t_ast_node *node)
+void	executor(t_ast_node *node, t_env **env)
 {
-	if (!node)
+	if (!node || !env)
 		return ;
-	set_exit_status(executor_status(node));
+	set_exit_status(executor_status(node, env));
 }
-
-
-
-
-
 

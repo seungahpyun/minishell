@@ -1,0 +1,14 @@
+bonus_tests.txt
+builtin_tests.txt
+complete_test.sh
+echo.sh
+exit_test.sh
+extras_tests.txt
+outfile01
+outfiles
+pipes_tests.txt
+pwd.sh
+redirects_tests.txt
+test_files
+unset.sh
+wildcards_tests.txt
