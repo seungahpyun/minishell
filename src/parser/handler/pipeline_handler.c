@@ -6,7 +6,7 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/20 21:55:20 by spyun         #+#    #+#                 */
-/*   Updated: 2025/02/11 10:42:20 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/17 21:03:59 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,15 @@ static t_ast_node	*parse_pipe_sequence(t_token **token)
 		if (!left)
 			return (NULL);
 		if (*token && is_redirection(*token))
-			left = handle_redirection_in_pipe(left, token);
-		if (!left)
-			return (NULL);
+		{
+			t_ast_node *redir = handle_redirection_in_pipe(left, token);
+			if (!redir)
+			{
+				free_ast(left);
+				return (NULL);
+			}
+			left = redir;
+		}
 	}
 	else
 		return (NULL);
@@ -66,8 +72,18 @@ static t_ast_node	*parse_pipe_sequence(t_token **token)
 	*token = (*token)->next;
 	right = parse_pipe_sequence(token);
 	if (!right)
-		return (free_ast(left), NULL);
-	return (create_pipe_node(left, right));
+	{
+		free_ast(left);
+		return (NULL);
+	}
+	t_ast_node *pipe_node = create_pipe_node(left, right);
+	if (!pipe_node)
+	{
+		free_ast(left);
+		free_ast(right);
+		return (NULL);
+	}
+	return (pipe_node);
 }
 
 t_ast_node	*parse_pipeline(t_token **token)
@@ -77,8 +93,6 @@ t_ast_node	*parse_pipeline(t_token **token)
 
 	if (!token || !*token)
 		return (NULL);
-	printf("Starting pipeline parse with token: type=%d, content='%s'\n",
-		(*token)->type, (*token)->content);
 	root = parse_pipe_sequence(token);
 	if (!root)
 		return (NULL);

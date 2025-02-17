@@ -6,7 +6,11 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/20 13:46:08 by spyun         #+#    #+#                 */
+<<<<<<< HEAD
 /*   Updated: 2025/02/11 10:38:20 by bewong        ########   odam.nl         */
+=======
+/*   Updated: 2025/02/13 16:08:57 by bewong        ########   odam.nl         */
+>>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +32,11 @@ typedef struct s_ast_node
 	struct s_ast_node	*left;
 	struct s_ast_node	*right;
 	t_env				**env;
+<<<<<<< HEAD
 	struct s_ast_node	*redir_cmd;
 	struct s_ast_node	*subshell_cmd;
+=======
+>>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
 	int					is_subshell;
 }	t_ast_node;
 

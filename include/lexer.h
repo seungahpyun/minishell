@@ -3,10 +3,14 @@
 /*                                                        ::::::::            */
 /*   lexer.h                                            :+:    :+:            */
 /*                                                     +:+                    */
-/*   By: spyun <spyun@student.codam.nl>               +#+                     */
+/*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/20 13:28:37 by spyun         #+#    #+#                 */
+<<<<<<< HEAD
 /*   Updated: 2025/02/11 10:36:43 by bewong        ########   odam.nl         */
+=======
+/*   Updated: 2025/02/11 11:00:28 by bewong        ########   odam.nl         */
+>>>>>>> 114a37d924b16fb68f7a4b0588d46057ca0edf73
 /*                                                                            */
 /* ************************************************************************** */
 
