@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/31 14:41:36 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/11 17:37:11 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/18 17:42:21 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,22 @@ void	interrput_silence(int sig)
 {
 	(void)sig;
 	set_exit_status(1);
+}
+static int	*heredoc_error(void)
+{
+	static int	fd = -1;
+
+	return (&fd);
+}
+
+void	heredoc_signals(int sig)
+{
+	(void)sig;
+	ft_putstr_fd("\n", STDOUT_FILENO);
+	rl_on_new_line();
+	rl_replace_line("", 0);
+	*heredoc_error() = dup(0);
+	close(0);
 }
 
 /* 

@@ -150,12 +150,19 @@ int	exec_redir(t_ast_node *node, t_env **env, t_redir *redir)
 		redir_fd = get_redir_fd(current_redir->type);
 		if (current_redir->type == TOKEN_HEREDOC)
 		{
-			fd = open(current_redir->file, get_redir_flags(current_redir->type), 0644);
-			if (fd < 0)
-				return (error("heredoc failed to open", NULL), set_exit_status(1), 1);
-			if (dup2(fd, STDIN_FILENO) == -1)
-				return (error("dup2 failed for heredoc", NULL), close(fd), set_exit_status(1), 1);
+			printf("am i here?\n");
+			handle_heredoc(current_redir, 2);
+			fd = open(current_redir->file, O_RDONLY);
+		if (fd == -1)
+			return (error("open heredoc failed", NULL), set_exit_status(1), 1);
+		if (saved_fd[STDIN_FILENO] == -1)
+			saved_fd[STDIN_FILENO] = dup(STDIN_FILENO);
+		if (dup2(fd, STDIN_FILENO) == -1)
+		{
 			close(fd);
+			return (error("dup2 failed", NULL), set_exit_status(1), 1);
+		}
+		close(fd);
 		}
 		else
 		{
@@ -173,7 +180,10 @@ int	exec_redir(t_ast_node *node, t_env **env, t_redir *redir)
 		}
 		current_redir = current_redir->next;
 	}
+	printf("Finished last heredoc, moving to execution...\n");
+	printf("Calling exec_cmd...\n");
 	status = exec_cmd(node, env);
+	printf("exec_cmd() returned: %d\n", status);
 	restore_redirection(saved_fd);
 	current_redir = redir;
 	while (current_redir)

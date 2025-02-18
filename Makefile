@@ -78,6 +78,7 @@ EXECUTOR_FILES = $(EXECUTOR_DIR)/executor.c \
 				 $(EXECUTOR_DIR)/error/error.c \
 				 $(EXECUTOR_DIR)/execute_process.c \
 				 $(EXECUTOR_DIR)/execute_pipe.c \
+				 $(EXECUTOR_DIR)/execute_heredoc.c \
 
 COMMON_FILES = $(COMMON_DIR)/signal.c \
 				$(COMMON_DIR)/utils/memory/memory_tracker.c \

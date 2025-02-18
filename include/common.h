@@ -6,7 +6,7 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/28 14:56:46 by spyun         #+#    #+#                 */
-/*   Updated: 2025/02/16 14:01:20 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/18 17:42:59 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,5 @@ char	*mem_substr(char const *s, unsigned int start, size_t len);
 void	signals_init(void);
 void	interrupt_w_msg(int sig);
 void	interrput_silence(int sig);
+void	heredoc_signals(int sig);
 #endif

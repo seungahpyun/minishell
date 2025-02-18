@@ -6,7 +6,7 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/21 10:13:43 by spyun         #+#    #+#                 */
-/*   Updated: 2025/02/17 16:53:45 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/18 17:05:37 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,12 @@
 
 # define MAX_STATUS_LEN 20
 # define EXIT_ERROR_CODE 255
+
+typedef struct s_heredoc
+{
+	char		*delimiter;
+	char		*filename;
+}	t_heredoc;
 
 /*error*/
 void	error(char *word, char *msg);
@@ -51,6 +57,9 @@ pid_t	spawn_process(int input, int pipe_fd[2], \
 void	child_process(t_ast_node *node, int input, \
 		int output, int new_input, t_env **env);
 void	redirect_io(int input, int output, int new_input);
+
+/*execute_heredoc*/
+void	handle_heredoc(t_redir *r, int index);
 
 /*utils*/
 void	set_exit_status(int status);

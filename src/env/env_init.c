@@ -36,6 +36,7 @@ static t_env	*env_int(char **key_value)
 	SHLVL: tracks how many nested shells are currently active and is incremented or reset if missing.
 	_: Represents the last executed command; its scope is set to ENVE.
 	?: Special variable representing the exit status of the last command.
+	env -i: run with an empty environment
 */
 t_env *create_env(char *env)
 {
