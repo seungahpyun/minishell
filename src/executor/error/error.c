@@ -23,3 +23,11 @@ void error(char *word, char *msg)
 	ft_putstr_fd(RESET, STDERR_FILENO);
 	set_exit_status(EXIT_FAILURE);
 }
+
+void	error_heredoc(char *delimiter)
+{
+	ft_putstr_fd("minishell: warning: here-document delimited by end-of-file (wanted `", STDERR_FILENO);
+	ft_putstr_fd(delimiter, STDERR_FILENO);
+	ft_putstr_fd("')\n", STDERR_FILENO);
+	set_exit_status(1);
+}

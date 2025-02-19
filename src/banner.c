@@ -6,7 +6,7 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/27 15:36:16 by spyun         #+#    #+#                 */
-/*   Updated: 2025/02/10 13:36:26 by spyun         ########   odam.nl         */
+/*   Updated: 2025/02/19 15:08:07 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ static void	print_line(const char *str)
 	while (*str)
 		write(STDOUT_FILENO, str++, 1);
 	write(STDOUT_FILENO, "\n", 1);
+
 }
 
 void	print_banner(void)

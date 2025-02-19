@@ -114,76 +114,25 @@ int	exec_pipe(t_ast_node *node, t_env **env)
 	return (status_);
 }
 
-static void	restore_redirection(int saved_fd[2])
-{
-	if (saved_fd[0] != -1)
-	{
-		dup2(saved_fd[0], STDIN_FILENO);
-		close(saved_fd[0]);
-	}
-	if (saved_fd[1] != -1)
-	{
-		dup2(saved_fd[1], STDOUT_FILENO);
-		close(saved_fd[1]);
-	}
-}
 
 int	exec_redir(t_ast_node *node, t_env **env, t_redir *redir)
 {
-	int		saved_fd[2] = {-1, -1};
-	int		fd;
-	int		redir_fd;
-	int		status;
-	t_redir	*current_redir;
+	int saved_fd[2];
+	int status;
+	t_redir *current_redir;
 
 	if (!node || !redir || !env)
 		return (0);
+	saved_fd[0] = -1;
+	saved_fd[1] = -1;
+	handle_all_heredocs(redir);
 	current_redir = redir;
-	expander(node);
 	while (current_redir)
 	{
-		if (!current_redir->file)
-		{
-			current_redir = current_redir->next;
-			continue;
-		}
-		redir_fd = get_redir_fd(current_redir->type);
-		if (current_redir->type == TOKEN_HEREDOC)
-		{
-			printf("am i here?\n");
-			handle_heredoc(current_redir, 2);
-			fd = open(current_redir->file, O_RDONLY);
-		if (fd == -1)
-			return (error("open heredoc failed", NULL), set_exit_status(1), 1);
-		if (saved_fd[STDIN_FILENO] == -1)
-			saved_fd[STDIN_FILENO] = dup(STDIN_FILENO);
-		if (dup2(fd, STDIN_FILENO) == -1)
-		{
-			close(fd);
-			return (error("dup2 failed", NULL), set_exit_status(1), 1);
-		}
-		close(fd);
-		}
-		else
-		{
-			fd = open(current_redir->file, get_redir_flags(current_redir->type), 0644);
-			if (fd == -1)
-				return (error(current_redir->file, NULL), set_exit_status(1), 1);
-			if (saved_fd[redir_fd] == -1)
-				saved_fd[redir_fd] = dup(redir_fd);  // Save the original file descriptor
-			if (dup2(fd, redir_fd) == -1)
-			{
-				close(fd);
-				return (error("dup2 failed", NULL), set_exit_status(1), 1);
-			}
-			close(fd);
-		}
+		launch_redir(current_redir, saved_fd);
 		current_redir = current_redir->next;
 	}
-	printf("Finished last heredoc, moving to execution...\n");
-	printf("Calling exec_cmd...\n");
 	status = exec_cmd(node, env);
-	printf("exec_cmd() returned: %d\n", status);
 	restore_redirection(saved_fd);
 	current_redir = redir;
 	while (current_redir)
@@ -194,7 +143,6 @@ int	exec_redir(t_ast_node *node, t_env **env, t_redir *redir)
 	}
 	return status;
 }
-
 
 
 /*
@@ -215,10 +163,7 @@ int	exec_cmd(t_ast_node *node, t_env **env)
 		return (set_exit_status(0), 0);
 	builtin = is_builtin(node->args[0]);
 	if (builtin)
-	{
-		set_exit_status(builtin(node, env));
-		return get_exit_status();
-	}
+		return (set_exit_status(builtin(node, env)), get_exit_status());
 	status_ = check_cmd(node, env);
 	if (status_ != 0)
 		return status_;
@@ -228,7 +173,7 @@ int	exec_cmd(t_ast_node *node, t_env **env)
 	if (pid == -1)
 	{
 		perror("fork failed");
-		return EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	}
 	else if (pid == 0)
 		child(node, env);
