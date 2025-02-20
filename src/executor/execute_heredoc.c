@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/18 10:15:49 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/19 21:00:14 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/20 13:29:16 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,116 +14,94 @@
 #include "common.h"
 
 //strace -f bash -c
-static int	count_heredocs(t_redir *redir)
+static char	*gen_filename(void)
 {
-	int	count;
-
-	count = 0;
-	while (redir)
-	{
-		if (redir->type == TOKEN_HEREDOC)
-			count++;
-		redir = redir->next;
-	}
-	return (count);
-}
-static char	*gen_filename(int index)
-{
+	static int	heredoc_count = 1;
 	char	*filename;
-	char 	*index_str;
+	char	*index_str;
 
-	index_str = ft_itoa(index);
+	index_str = mem_itoa(heredoc_count++);
 	if (!index_str)
 		return (NULL);
 	filename = mem_strjoin("/tmp/heredoc_", index_str);
-	free(index_str);
+	free_alloc(index_str);
+	index_str = NULL;
 	return (filename);
 }
 
-static t_heredoc	*heredoc_init(t_redir *redir, int heredoc_counter)
+static int	process_line(char *line, char *delimiter, int fd)
 {
-	t_heredoc	*heredoc;
-
-	heredoc = (t_heredoc *)mem_alloc(sizeof(t_heredoc));
-	if (!heredoc)
-		return (NULL);
-	heredoc->delimiter = redir->file;
-	heredoc->delimiter_count = count_heredocs(redir);
-	heredoc->filename = gen_filename(heredoc_counter);
-	if (!heredoc->filename )
-		return (error("Memory allocation failed", NULL), free(heredoc), NULL);
-	heredoc->fd = open(heredoc->filename , O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (heredoc->fd == -1)
-		return (error("heredoc_init open() failed", NULL), free(heredoc->filename), free(heredoc), NULL);
-	return (heredoc);
-}
-
-static void	free_heredoc_on_failure(t_heredoc *heredoc, t_redir *r)
-{
-	if (!heredoc)
+	if (!line)
 	{
-		error("open heredoc", NULL);
-		exit(1);
+		error_heredoc(delimiter);
+		return (0);
 	}
-	free_alloc(heredoc->filename);
-	if (heredoc->delimiter != r->file)
-		free_alloc(heredoc->delimiter);
-	free_alloc(heredoc);
-	exit(1);
+	if (ft_strcmp(line, delimiter) == 0)
+	{
+		free(line);
+		return (0);
+	}
+	write(fd, line, ft_strlen(line));
+	write(fd, "\n", 1);
+	free(line);
+	return (1);
 }
 
-
-static void	handle_heredoc(t_redir *r, int heredoc_counter)
+static char	*process_heredoc(char *delimiter)
 {
-	char	*content;
-	t_heredoc	*heredoc;
+	char *filename;
+	int fd;
+	char *line;
+	int continue_reading;
 
-	signal(SIGINT, heredoc_signals);
-	heredoc = heredoc_init(r, heredoc_counter);
-	if (!heredoc || !heredoc->filename)
-		return (error("heredoc init failed", NULL), exit(1));
-	heredoc->fd = open(heredoc->filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (heredoc->fd == -1)
-		return (free_heredoc_on_failure(heredoc, r));
+	filename = gen_filename();
+	if (!filename)
+		return (NULL);
+	fd = open(filename, O_CREAT | O_RDWR | O_TRUNC, 0644);
+	if (fd == -1)
+		return (error("open heredoc", NULL), free_alloc(filename), filename = NULL, NULL);
 	while (1)
 	{
-		ft_putstr_fd("heredoc> ", STDOUT_FILENO);
-		content = get_next_line(STDIN_FILENO);
-		if (!content)
-			break ;
-		if (ft_strncmp(content, heredoc->delimiter, ft_strlen(heredoc->delimiter)) == 0
-			&& content[ft_strlen(heredoc->delimiter)] == '\n')
-		{
-			free_alloc(content);
+		if (get_exit_status() == 130)
 			break;
-		}
-		write(heredoc->fd, content, ft_strlen(content));
-		free_alloc(content);
+		line = readline("heredoc> ");
+		continue_reading = process_line(line, delimiter, fd);
+		if (continue_reading == 0)
+			break;
 	}
-	close(heredoc->fd);
-	r->file = heredoc->filename;
-	free(heredoc->delimiter);
-	free(heredoc);
-	restore_stdin_after_heredoc();
+	close(fd);
+	return (filename);
 }
 
-void	handle_all_heredocs(t_redir *redir)
+static void cleanup_temp(t_redir *current, char *temp_file)
 {
-	int		heredoc_counter;
-	t_redir	*current_redir;
-	int		total_heredocs;
-
-	heredoc_counter = 1;
-	current_redir = redir;
-	total_heredocs = count_heredocs(redir);
-	printf("Total heredocs: %d\n", total_heredocs);
-	while (current_redir  && heredoc_counter <= total_heredocs)
+	if (*heredoc_error() != -1)
+		unlink(temp_file);
+	if (current->file != temp_file)
 	{
-		if (current_redir->type == TOKEN_HEREDOC)
-		{
-			handle_heredoc(current_redir, heredoc_counter);
-			heredoc_counter++;
-		}
-		current_redir = current_redir->next;
+		free_alloc(current->file);
+		current->file = temp_file;
 	}
+}
+
+void	handle_all_heredocs(t_redir *redir, int saved_fd[2])
+{
+	t_redir	*current;
+	char	*temp_file;
+
+	current = redir;
+	if (saved_fd[0] == -1)
+		saved_fd[0] = dup(STDIN_FILENO);
+	signal(SIGINT, heredoc_signals);
+	*heredoc_error() = -1;
+	while (current)
+	{
+		if (current->type == TOKEN_HEREDOC)
+		{
+			temp_file = process_heredoc(current->file);
+			cleanup_temp(current, temp_file);
+		}
+		current = current->next;
+	}
+	signal(SIGINT, SIG_DFL);
 }

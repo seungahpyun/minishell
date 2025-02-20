@@ -117,31 +117,38 @@ int	exec_pipe(t_ast_node *node, t_env **env)
 
 int	exec_redir(t_ast_node *node, t_env **env, t_redir *redir)
 {
-	int saved_fd[2];
-	int status;
-	t_redir *current_redir;
+	int		saved_fd[2];
+	int		status;
+	t_redir	*current_redir;
 
 	if (!node || !redir || !env)
 		return (0);
 	saved_fd[0] = -1;
 	saved_fd[1] = -1;
-	handle_all_heredocs(redir);
+	handle_all_heredocs(redir, saved_fd);
+	if (get_exit_status() == 130)
+		return (130);
 	current_redir = redir;
 	while (current_redir)
 	{
 		launch_redir(current_redir, saved_fd);
+		if (get_exit_status() == 1) 
+			break;
 		current_redir = current_redir->next;
 	}
-	status = exec_cmd(node, env);
+	if (get_exit_status() != 1)
+		status = exec_cmd(node, env);
+	else
+		status = 1;;
 	restore_redirection(saved_fd);
 	current_redir = redir;
 	while (current_redir)
 	{
-		if (current_redir->type == TOKEN_HEREDOC)
+		if (current_redir->type == TOKEN_HEREDOC && current_redir->file)
 			unlink(current_redir->file);
 		current_redir = current_redir->next;
 	}
-	return status;
+	return (status);
 }
 
 

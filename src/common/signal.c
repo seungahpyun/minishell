@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/31 14:41:36 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/19 20:30:00 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/20 12:59:18 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,9 @@ void	interrput_silence(int sig)
 	duplicates the current file descriptor 0 (standard input) into a static variable
 	restore the file descriptor after the signal is caught.
 */
-static int	*heredoc_error(void)
+int	*heredoc_error(void)
 {
-	static int	fd;
-
-	fd = -1;
+	static int	fd = -1;
 	return (&fd);
 }
 
@@ -64,19 +62,9 @@ void	heredoc_signals(int sig)
 	ft_putstr_fd("\n", STDOUT_FILENO);
 	rl_on_new_line();
 	rl_replace_line("", 0);
-	*heredoc_error() = dup(0);
-	close(0);
-}
-
-void restore_stdin_after_heredoc(void)
-{
-	if (*heredoc_error() != -1)
-	{
-		close(0); // Close old fd
-		dup2(*heredoc_error(), 0); // Restore saved fd
-		close(*heredoc_error()); // Close the duplicate fd
-		*heredoc_error() = -1; // Reset saved fd
-	}
+	*heredoc_error() = dup(STDIN_FILENO);
+	close(STDIN_FILENO);
+	set_exit_status(130);
 }
 
 /* 

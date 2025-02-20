@@ -6,7 +6,7 @@
 /*   By: spyun <spyun@student.codam.nl>               +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/01/21 10:13:43 by spyun         #+#    #+#                 */
-/*   Updated: 2025/02/19 18:05:04 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/20 10:22:16 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,13 @@
 # define MAX_STATUS_LEN 20
 # define EXIT_ERROR_CODE 255
 
-typedef struct s_heredoc
-{
-	char		*delimiter;
-	char		*filename;
-	int			delimiter_count;
-	int			fd;
-}	t_heredoc;
+// typedef struct s_heredoc
+// {
+// 	char		*delimiter;
+// 	char		*filename;
+// 	int			delimiter_count;
+// 	int			fd;
+// }	t_heredoc;
 
 /*error*/
 void	error(char *word, char *msg);
@@ -62,7 +62,7 @@ void	child_process(t_ast_node *node, int input, \
 void	redirect_io(int input, int output, int new_input);
 
 /*execute_heredoc*/
-void	handle_all_heredocs(t_redir *redir);
+void	handle_all_heredocs(t_redir *redir, int saved_fd[2]);
 
 /*execute_redir*/
 void	launch_redir(t_redir *current_redir, int saved_fd[2]);
