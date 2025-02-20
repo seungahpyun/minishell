@@ -90,14 +90,11 @@ COMMON_FILES = $(COMMON_DIR)/signal.c \
 				$(COMMON_DIR)/utils/mem_helper/mem_strndup.c \
 				$(COMMON_DIR)/utils/mem_helper/mem_strdup.c \
 				$(COMMON_DIR)/utils/mem_helper/mem_substr.c \
+				$(COMMON_DIR)/utils/mem_helper/mem_realloc.c \
 
-EXPANDER_FILES = $(EXPANDER_DIR)/expand_exec.c \
-				 $(EXPANDER_DIR)/expand_quotes.c \
-				 $(EXPANDER_DIR)/expand_utils.c \
-				 $(EXPANDER_DIR)/expand_utils2.c \
-				 $(EXPANDER_DIR)/expander.c \
-				 $(EXPANDER_DIR)/expand_redir.c \
-				 $(EXPANDER_DIR)/expand_heredoc.c \
+EXPANDER_FILES = $(EXPANDER_DIR)/expander.c \
+				$(EXPANDER_DIR)/expand_wildcard.c \
+				$(EXPANDER_DIR)/expand_wildcard_utils.c \
 
 
 OBJ_FILES = $(SRC_FILES:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)

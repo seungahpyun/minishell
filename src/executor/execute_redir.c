@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/19 12:56:28 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/20 13:35:08 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/20 14:13:26 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,31 +20,33 @@ static int	open_heredoc_file(char *file)
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
 	{
-        error(file, NULL);
-        set_exit_status(1);
+		error(file, NULL);
+		set_exit_status(1);
 	}
 	return (fd);
 }
 
 static int	open_redir_file(char *file, int redir_type)
 {
-    int fd = open(file, get_redir_flags(redir_type), 0644);
-    if (fd == -1)
-    {
-        error(file, NULL);
-        set_exit_status(1);
-    }
-    return fd;
+	int	fd;
+
+	fd = open(file, get_redir_flags(redir_type), 0644);;
+	if (fd == -1)
+	{
+		error(file, NULL);
+		set_exit_status(1);
+	}
+	return (fd);
 }
 static void	perform_dup2(int fd, int redir_fd)
 {
-    if (dup2(fd, redir_fd) == -1)
-    {
-        close(fd);
-        error("dup2 failed", NULL);
-        set_exit_status(1);
-    }
-    close(fd);
+	if (dup2(fd, redir_fd) == -1)
+	{
+		close(fd);
+		error("dup2 failed", NULL);
+		set_exit_status(1);
+	}
+	close(fd);
 }
 
 void	launch_redir(t_redir *current_redir, int saved_fd[2])

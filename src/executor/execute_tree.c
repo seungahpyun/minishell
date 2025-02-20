@@ -100,6 +100,7 @@ int	exec_pipe(t_ast_node *node, t_env **env)
 
 	// fprintf(stderr,"Executing pipe node\n");
 	set_exit_status(0);
+	status_ = 0;
 	last_pid = launch_pipe(node, env);
 	waitpid(last_pid, &status_, 0);
 	if (WIFEXITED(status_))
@@ -123,6 +124,7 @@ int	exec_redir(t_ast_node *node, t_env **env, t_redir *redir)
 
 	if (!node || !redir || !env)
 		return (0);
+	// expander((t_ast_node*)redir);
 	saved_fd[0] = -1;
 	saved_fd[1] = -1;
 	handle_all_heredocs(redir, saved_fd);
@@ -168,6 +170,7 @@ int	exec_cmd(t_ast_node *node, t_env **env)
 
 	if (!node || !node->args || !env || node->argc == 0)
 		return (set_exit_status(0), 0);
+	expander(node, env);
 	builtin = is_builtin(node->args[0]);
 	if (builtin)
 		return (set_exit_status(builtin(node, env)), get_exit_status());
