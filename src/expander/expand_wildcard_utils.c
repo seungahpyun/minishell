@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/02/20 19:32:41 by bewong        #+#    #+#                 */
-/*   Updated: 2025/02/20 22:17:48 by bewong        ########   odam.nl         */
+/*   Updated: 2025/02/25 00:04:34 by bewong        ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,43 @@ static void	cleanup_matches(char **matches, int count)
 	}
 	free(matches);
 }
+
+static int match_patterns(char *pattern, char *string)
+{
+	char	*p;
+	char	*s;
+	char	*star;
+	char	*ss;
+
+	p = pattern;
+	s = string;
+	star = NULL;
+	ss = NULL;
+	while (*s)
+	{
+		if (*p == *s || *p == '?')
+		{
+			p++;
+			s++;
+		}
+		else if (*p == '*')
+		{
+			star = p++;
+			ss = s;
+		}
+		else if (star)
+		{
+			p = star + 1;
+			s = ++ss;
+		}
+		else
+			return (0);
+	}
+	while (*p == '*')
+		p++;
+	return (*p == '\0');
+}
+
 
 /* Get files matching a wildcard pattern */
 char	**get_matching_files(const char *pattern, int *num_matches)
