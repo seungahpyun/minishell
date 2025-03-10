@@ -52,8 +52,8 @@ int	executor_status(t_ast_node *node, t_env **env, t_token *tokens, bool error_)
 		return (exec_ctrl(node, env, tokens));
 	else if (node->redirections)
 		return (exec_redir(node, env, tokens, error_));
-	else if (node->type == TOKEN_PIPE)
-		return (exec_pipe(node, env, tokens));
+	// else if (node->type == TOKEN_PIPE)
+	// 	return (exec_pipe(node, env, tokens));
 	else if (node->type == TOKEN_BLOCK)
 		return (exec_block(node, env, tokens));
 	else if (node->type == TOKEN_EXEC)
