@@ -6,7 +6,7 @@
 /*   By: bewong <bewong@student.codam.nl>             +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2025/03/06 23:00:05 by bewong        #+#    #+#                 */
-/*   Updated: 2025/03/15 21:17:33 by bewong        ########   odam.nl         */
+/*   Updated: 2025/03/18 14:40:15 by spyun         ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int	wait_for_child(void)
 {
 	int	status_;
 
+	status_ = 0;
 	wait(&status_);
 	return (process_exit_status(status_));
 }
@@ -54,6 +55,7 @@ int	wait_for_pid(pid_t pid)
 {
 	int	status_;
 
+	status_ = 0;
 	waitpid(pid, &status_, 0);
 	return (process_exit_status(status_));
 }
